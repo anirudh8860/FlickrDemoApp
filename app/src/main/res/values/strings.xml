@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">FlickrDemoApp</string>
+    <string name="action_settings">Settings</string>
+    <string name="login_btn">Login</string>
+    <string name="email_id">Email</string>
+    <string name="password">Password</string>
+    <string name="search">Search</string>
+    <string name="search_btn">SEARCH</string>
+    <string name="login">Login</string>
+</resources>

@@ -2,7 +2,6 @@ package simplegamer003.flickrdemoapp;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -10,7 +9,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     GridView gridView;
     EditText search;
     Button searchBtn;
+    int imageTotal = 20;
     ImageGridViewAdapter imageGridViewAdapter;
     String flickrsearch = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ce6897bab612b7d7b1d9a1c3e18d242c&text=";
     String flickrlogin = "http://api.flickr.com/services/rest/?method=flickr.test.login&api_key=%s";
@@ -44,11 +43,11 @@ public class MainActivity extends AppCompatActivity {
     String searchFor;
     String json = "&format=json";
     String limit = "&per_page=20";
-    String[] id = new String[20];
-    int[] farm = new int[20];
-    int[] server = new int[20];
-    String[] secret = new String[20];
-    String[] urls = new String[20];
+    String[] id = new String[imageTotal];
+    int[] farm = new int[imageTotal];
+    int[] server = new int[imageTotal];
+    String[] secret = new String[imageTotal];
+    String[] urls = new String[imageTotal];
 
 
     @Override
@@ -59,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         gridView = (GridView)findViewById(R.id.image_grid);
-        initializeComponents();
 
         search = (EditText)findViewById(R.id.search_bar);
         searchBtn = (Button)findViewById(R.id.search_image_btn);
@@ -82,17 +80,6 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-    }
-
-    private void initializeComponents() {
-        Display display = getWindowManager().getDefaultDisplay();
-        Point p = new Point();
-        display.getSize(p);
-        gridView.setNumColumns(p.x / p.y);
-        float spacing = 5;
-        gridView.setPadding((int) spacing, (int) spacing, (int) spacing, (int) spacing);
-        gridView.setVerticalSpacing((int) spacing);
-        gridView.setHorizontalSpacing((int) spacing);
     }
 
     @Override
@@ -160,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
             JSONArray photos;
             try {
                 photos = new JSONArray(req);
-                for (int i = 0;  i < 20; i++) {
+                for (int i = 0;  i < imageTotal; i++) {
                     JSONObject photo = photos.getJSONObject(i);
                     id[i] = photo.getString("id");
                     farm[i] = photo.getInt("farm");
@@ -187,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void makeUrls() {
-        for (int i = 0; i < 20; i++){
+        for (int i = 0; i < imageTotal; i++){
             String idstr = id[i];
             String farmstr = String.valueOf(farm[i]);
             String serverstr = String.valueOf(server[i]);

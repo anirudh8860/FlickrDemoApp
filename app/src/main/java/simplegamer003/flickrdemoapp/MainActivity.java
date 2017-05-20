@@ -44,10 +44,11 @@ public class MainActivity extends AppCompatActivity {
     String searchFor;
     String json = "&format=json";
     String limit = "&per_page=20";
-    double[] id = new double[20];
+    String[] id = new String[20];
     int[] farm = new int[20];
     int[] server = new int[20];
     String[] secret = new String[20];
+    String[] urls = new String[20];
 
 
     @Override
@@ -117,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    class LoadImages extends AsyncTask<String, Integer, String>{
+    class LoadImages extends AsyncTask<Void, Void, Void>{
         private ProgressDialog progressDialog;
 
         protected void onPreExecute(){
@@ -127,13 +128,12 @@ public class MainActivity extends AppCompatActivity {
             progressDialog.show();
         }
 
-        protected void onProgressUpdate(Integer... values){
-            /*super.onProgressUpdate(values);
-            progressDialog.setMessage(String.format("Loading images from Flickr %s/%s. Please wait...", values[0], values[1]));*/
+        protected void onProgressUpdate(Void... params){
+            super.onProgressUpdate();
+            progressDialog.setMessage(String.format("Loading images from Flickr. Please wait..."));
         }
 
-        @Override
-        protected String doInBackground(String... params) {
+        protected Void doInBackground(Void... params) {
             StringBuilder result = new StringBuilder();
             HttpURLConnection urlConnection = null;
             try {
@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
                 photos = new JSONArray(req);
                 for (int i = 0;  i < 20; i++) {
                     JSONObject photo = photos.getJSONObject(i);
-                    id[i] = photo.getDouble("id");
+                    id[i] = photo.getString("id");
                     farm[i] = photo.getInt("farm");
                     server[i] = photo.getInt("server");
                     secret[i] = photo.getString("secret");
@@ -175,13 +175,25 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             Log.d("JSON",req);
+            makeUrls();
             return null;
-
         }
 
-        protected void onPostExecute(){
+        @Override
+        protected void onPostExecute(Void result){
             progressDialog.dismiss();
-            gridView.setAdapter(imageGridViewAdapter);
+            gridView.setAdapter(new ImageGridViewAdapter(MainActivity.this,urls));
+        }
+    }
+
+    private void makeUrls() {
+        for (int i = 0; i < 20; i++){
+            String idstr = id[i];
+            String farmstr = String.valueOf(farm[i]);
+            String serverstr = String.valueOf(server[i]);
+            String secretstr = secret[i];
+            urls[i] = "http://farm"+farmstr+".staticflickr.com/"+serverstr+"/"+idstr+"_"+secretstr+".jpg";
+            Log.d("ImageURL", urls[i]);
         }
     }
 }

@@ -1,7 +1,10 @@
 package simplegamer003.flickrdemoapp;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -64,11 +67,13 @@ public class MainActivity extends AppCompatActivity {
 
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 searchFor = search.getText().toString();
                 flickrsearch = flickrsearch+searchFor+json+limit;
                 Log.d("URL",flickrsearch);
-                new LoadImages().execute();
+                if (hasInternetConnection())
+                    new LoadImages().execute();
+                else Snackbar.make(view, "Intenet not connected", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
 
@@ -76,8 +81,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
     }
@@ -153,10 +157,6 @@ public class MainActivity extends AppCompatActivity {
                     farm[i] = photo.getInt("farm");
                     server[i] = photo.getInt("server");
                     secret[i] = photo.getString("secret");
-                    /*Log.d("id", Double.toString(id[i]));
-                    Log.d("farm", Integer.toString(farm[i]));
-                    Log.d("server", Integer.toString(server[i]));
-                    Log.d("secret", secret[i]);*/
                 }
             }catch (JSONException e) {
                 e.printStackTrace();
@@ -182,6 +182,15 @@ public class MainActivity extends AppCompatActivity {
             urls[i] = "http://farm"+farmstr+".staticflickr.com/"+serverstr+"/"+idstr+"_"+secretstr+".jpg";
             Log.d("ImageURL", urls[i]);
         }
+    }
+
+    public  boolean hasInternetConnection(){
+        boolean connected = false;
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED)
+            connected = true;
+        return connected;
     }
 }
 

@@ -83,15 +83,8 @@ public class FlickrjActivity extends Activity {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see android.app.Activity#onNewIntent(android.content.Intent)
-     */
     @Override
     protected void onNewIntent(Intent intent) {
-        // this is very important, otherwise you would get a null Scheme in the
-        // onResume later on.
         setIntent(intent);
     }
 
@@ -172,8 +165,6 @@ public class FlickrjActivity extends Activity {
         oauth.setToken(oauthToken);
         oauthToken.setOauthToken(oauthTokenString);
         oauthToken.setOauthTokenSecret(tokenSecret);
-        // logger.debug(
-        //				"Retrieved token from preference store: oauth token={}, and token secret={}", oauthTokenString, tokenSecret); //$NON-NLS-1$
         return oauth;
     }
 

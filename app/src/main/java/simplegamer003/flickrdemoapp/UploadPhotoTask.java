@@ -20,31 +20,20 @@ import java.io.FileInputStream;
  */
 
 public class UploadPhotoTask extends AsyncTask<OAuth, Void, String> {
-    /**
-     *
-     */
     private final FlickrjActivity flickrjAndroidSampleActivity;
     private File file;
 
-    // private final Logger logger = LoggerFactory
-    // .getLogger(UploadPhotoTask.class);
-
-    public UploadPhotoTask(FlickrjActivity flickrjAndroidSampleActivity,
-                           File file) {
+    public UploadPhotoTask(FlickrjActivity flickrjAndroidSampleActivity, File file) {
         this.flickrjAndroidSampleActivity = flickrjAndroidSampleActivity;
         this.file = file;
     }
 
-    /**
-     * The progress dialog before going to the browser.
-     */
     private ProgressDialog mProgressDialog;
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        mProgressDialog = ProgressDialog.show(flickrjAndroidSampleActivity,
-                "", "Uploading..."); //$NON-NLS-1$ //$NON-NLS-2$
+        mProgressDialog = ProgressDialog.show(flickrjAndroidSampleActivity, "", "Uploading...");
         mProgressDialog.setCanceledOnTouchOutside(true);
         mProgressDialog.setCancelable(true);
         mProgressDialog.setOnCancelListener(new OnCancelListener() {
@@ -55,26 +44,18 @@ public class UploadPhotoTask extends AsyncTask<OAuth, Void, String> {
         });
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see android.os.AsyncTask#doInBackground(Params[])
-     */
     @Override
     protected String doInBackground(OAuth... params) {
         OAuth oauth = params[0];
         OAuthToken token = oauth.getToken();
 
         try {
-            Flickr f = FlickrHelper.getInstance().getFlickrAuthed(
-                    token.getOauthToken(), token.getOauthTokenSecret());
-
+            Flickr f = FlickrHelper.getInstance().getFlickrAuthed(token.getOauthToken(), token.getOauthTokenSecret());
             UploadMetaData uploadMetaData = new UploadMetaData();
             uploadMetaData.setTitle("" + file.getName());
-            return f.getUploader().upload(file.getName(),
-                    new FileInputStream(file), uploadMetaData);
+            return f.getUploader().upload(file.getName(), new FileInputStream(file), uploadMetaData);
         } catch (Exception e) {
-            Log.e("boom!!", "" + e.toString());
+            Log.e("Error", "" + e.toString());
             e.printStackTrace();
         }
         return null;

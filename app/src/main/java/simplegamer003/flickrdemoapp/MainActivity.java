@@ -43,12 +43,7 @@ public class MainActivity extends AppCompatActivity {
     EditText search;
     Button searchBtn;
     int imageTotal = 20;
-    ImageGridViewAdapter imageGridViewAdapter;
     String flickrsearch = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ee3b2f1b3dc6dee8786f9e3d481315c9&text=";
-    String upload_photos = "https://up.flickr.com/services/upload/";
-    String oAuthAccessToken = "https://api.flickr.com/services/rest/?method=flickr.auth.oauth.getAccessToken&api_key=ee3b2f1b3dc6dee8786f9e3d481315c9&format=json";
-    String flickrapikey = "ee3b2f1b3dc6dee8786f9e3d481315c9";
-    String flickrsecret = "30178bebb81b9950";
     String searchFor;
     String json = "&format=json";
     String limit = "&per_page=20";
@@ -58,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
     String[] secret = new String[imageTotal];
     String[] urls = new String[imageTotal];
     private static final int LOAD_IMAGE = 100;
-    String  tag_string_req = "string_req";
     File fileUri;
 
 
@@ -107,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Please pick photo", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                Log.d("Filepath", String.valueOf(fileUri));
 
                 Intent intent = new Intent(getApplicationContext(), FlickrjActivity.class);
                 intent.putExtra("flickImagePath", fileUri.getAbsolutePath());
@@ -163,8 +158,6 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent loginIntent = new Intent(this, LoginActivity.class);
-            startActivityForResult(loginIntent,0);
         }
 
         return super.onOptionsItemSelected(item);

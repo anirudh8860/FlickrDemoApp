@@ -21,26 +21,12 @@ import java.net.URL;
 
 public class OAuthTask extends AsyncTask<Void, Integer, String> {
 
-    // private static final Logger logger = LoggerFactory
-    // .getLogger(OAuthTask.class);
-    private static final Uri OAUTH_CALLBACK_URI = Uri
-            .parse(FlickrjActivity.CALLBACK_SCHEME + "://oauth"); //$NON-NLS-1$
+    private static final Uri OAUTH_CALLBACK_URI = Uri.parse(FlickrjActivity.CALLBACK_SCHEME + "://oauth");
 
-    /**
-     * The context.
-     */
     private Context mContext;
 
-    /**
-     * The progress dialog before going to the browser.
-     */
     private ProgressDialog mProgressDialog;
 
-    /**
-     * Constructor.
-     *
-     * @param context
-     */
     public OAuthTask(Context context) {
         super();
         this.mContext = context;
@@ -49,8 +35,7 @@ public class OAuthTask extends AsyncTask<Void, Integer, String> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        mProgressDialog = ProgressDialog.show(mContext,
-                "", "Generating the authorization request..."); //$NON-NLS-1$ //$NON-NLS-2$
+        mProgressDialog = ProgressDialog.show(mContext, "", "Generating the authorization request...");
         mProgressDialog.setCanceledOnTouchOutside(true);
         mProgressDialog.setCancelable(true);
         mProgressDialog.setOnCancelListener(new OnCancelListener() {
@@ -77,21 +62,13 @@ public class OAuthTask extends AsyncTask<Void, Integer, String> {
                     Permission.WRITE, oauthToken);
             return oauthUrl.toString();
         } catch (Exception e) {
-            //			logger.error("Error to oauth", e); //$NON-NLS-1$
-            return "error:" + e.getMessage(); //$NON-NLS-1$
+            return "error:" + e.getMessage();
         }
     }
 
-    /**
-     * Saves the oauth token secrent.
-     *
-     * @param tokenSecret
-     */
     private void saveTokenSecrent(String tokenSecret) {
-        //		logger.debug("request token: " + tokenSecret); //$NON-NLS-1$
         FlickrjActivity act = (FlickrjActivity) mContext;
         act.saveOAuthToken(null, null, null, tokenSecret);
-        //		logger.debug("oauth token secret saved: {}", tokenSecret); //$NON-NLS-1$
     }
 
     @Override
@@ -99,7 +76,7 @@ public class OAuthTask extends AsyncTask<Void, Integer, String> {
         if (mProgressDialog != null) {
             mProgressDialog.dismiss();
         }
-        if (result != null && !result.startsWith("error")) { //$NON-NLS-1$
+        if (result != null && !result.startsWith("error")) {
             mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri
                     .parse(result)));
         } else {

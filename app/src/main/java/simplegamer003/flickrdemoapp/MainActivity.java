@@ -3,10 +3,14 @@ package simplegamer003.flickrdemoapp;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +22,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +30,8 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -37,12 +44,11 @@ public class MainActivity extends AppCompatActivity {
     Button searchBtn;
     int imageTotal = 20;
     ImageGridViewAdapter imageGridViewAdapter;
-    String flickrsearch = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ce6897bab612b7d7b1d9a1c3e18d242c&text=";
-    String flickrlogin = "http://api.flickr.com/services/rest/?method=flickr.test.login&api_key=%s";
-    String flickr_photosets_getPhotos = "https://www.flickr.com/services/rest/?method=flickr.photosets.getPhotos&format=%s&api_key=%s&photoset_id=%s";
-    String flickr_photos_getSizes = "https://www.flickr.com/services/rest/?method=flickr.photos.getSizes&format=%s&api_key=%s&photo_id=%s";
-    String flickrapikey = "ce6897bab612b7d7b1d9a1c3e18d242c";
-    String flickrsecret = "4b9a6139e420111f";
+    String flickrsearch = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ee3b2f1b3dc6dee8786f9e3d481315c9&text=";
+    String upload_photos = "https://up.flickr.com/services/upload/";
+    String oAuthAccessToken = "https://api.flickr.com/services/rest/?method=flickr.auth.oauth.getAccessToken&api_key=ee3b2f1b3dc6dee8786f9e3d481315c9&format=json";
+    String flickrapikey = "ee3b2f1b3dc6dee8786f9e3d481315c9";
+    String flickrsecret = "30178bebb81b9950";
     String searchFor;
     String json = "&format=json";
     String limit = "&per_page=20";
@@ -51,14 +57,19 @@ public class MainActivity extends AppCompatActivity {
     int[] server = new int[imageTotal];
     String[] secret = new String[imageTotal];
     String[] urls = new String[imageTotal];
+    private static final int LOAD_IMAGE = 100;
+    String  tag_string_req = "string_req";
+    File fileUri;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         gridView = (GridView)findViewById(R.id.image_grid);
 
@@ -77,14 +88,64 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.upload);
-        fab.setOnClickListener(new View.OnClickListener() {
+
+
+        FloatingActionButton select = (FloatingActionButton) findViewById(R.id.select);
+        select.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(pickPhoto,0);
+            }
+        });
+
+        FloatingActionButton upload = (FloatingActionButton) findViewById(R.id.upload);
+        upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (fileUri == null) {
+                    Toast.makeText(getApplicationContext(), "Please pick photo", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Intent intent = new Intent(getApplicationContext(), FlickrjActivity.class);
+                intent.putExtra("flickImagePath", fileUri.getAbsolutePath());
+                startActivity(intent);
             }
         });
     }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+        try {
+            switch (requestCode) {
+                case 0:
+                    Uri selectedImage1 = imageReturnedIntent.getData();
+                    Bitmap bitmap1 = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage1);
+                    Uri tempUri = getImageUri(getApplicationContext(),bitmap1);
+                    fileUri = new File(getRealPathFromURI(tempUri));
+                    break;
+            }
+        }
+        catch (Exception e) {
+            Log.e("Filepickerror",e.toString());
+        }
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+    public String getRealPathFromURI(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+        return cursor.getString(idx);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -108,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 
     class LoadImages extends AsyncTask<Void, Void, Void>{
         private ProgressDialog progressDialog;

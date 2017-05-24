@@ -22,6 +22,7 @@ import java.util.Locale;
  */
 
 public class FlickrjActivity extends Activity {
+
     public static final String CALLBACK_SCHEME = "flickrj-android-sample-oauth";
     public static final String PREFS_NAME = "flickrj-android-sample-pref";
     public static final String KEY_OAUTH_TOKEN = "flickrj-android-oauthToken";
@@ -31,7 +32,6 @@ public class FlickrjActivity extends Activity {
 
     String path;
 
-    /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,8 +95,7 @@ public class FlickrjActivity extends Activity {
         String scheme = intent.getScheme();
         OAuth savedToken = getOAuthToken();
 
-        if (CALLBACK_SCHEME.equals(scheme)
-                && (savedToken == null || savedToken.getUser() == null)) {
+        if (CALLBACK_SCHEME.equals(scheme) && (savedToken == null || savedToken.getUser() == null)) {
             Uri uri = intent.getData();
             String query = uri.getQuery();
             String[] data = query.split("&");
@@ -130,9 +129,7 @@ public class FlickrjActivity extends Activity {
                         Toast.LENGTH_LONG).show();
                 return;
             }
-            String message = String
-                    .format(Locale.US,
-                            "Authorization Succeed: user=%s, userId=%s, oauthToken=%s, tokenSecret=%s", //$NON-NLS-1$
+            String message = String.format(Locale.US, "Authorization Succeed: user=%s, userId=%s, oauthToken=%s, tokenSecret=%s",
                             user.getUsername(), user.getId(),
                             token.getOauthToken(), token.getOauthTokenSecret());
             Toast.makeText(this, message, Toast.LENGTH_LONG).show();
@@ -149,7 +146,6 @@ public class FlickrjActivity extends Activity {
         String oauthTokenString = settings.getString(KEY_OAUTH_TOKEN, null);
         String tokenSecret = settings.getString(KEY_TOKEN_SECRET, null);
         if (oauthTokenString == null && tokenSecret == null) {
-            //			logger.warn("No oauth token retrieved"); //$NON-NLS-1$
             return null;
         }
         OAuth oauth = new OAuth();
@@ -168,8 +164,7 @@ public class FlickrjActivity extends Activity {
         return oauth;
     }
 
-    public void saveOAuthToken(String userName, String userId, String token,
-                               String tokenSecret) {
+    public void saveOAuthToken(String userName, String userId, String token, String tokenSecret) {
         SharedPreferences sp = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         Editor editor = sp.edit();
         editor.putString(KEY_OAUTH_TOKEN, token);
@@ -181,6 +176,5 @@ public class FlickrjActivity extends Activity {
 
     private Context getContext() {
         return this;
-
     }
 }

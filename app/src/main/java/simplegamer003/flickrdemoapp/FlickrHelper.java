@@ -3,10 +3,8 @@ package simplegamer003.flickrdemoapp;
 import com.googlecode.flickrjandroid.Flickr;
 import com.googlecode.flickrjandroid.REST;
 import com.googlecode.flickrjandroid.RequestContext;
-import com.googlecode.flickrjandroid.interestingness.InterestingnessInterface;
 import com.googlecode.flickrjandroid.oauth.OAuth;
 import com.googlecode.flickrjandroid.oauth.OAuthToken;
-import com.googlecode.flickrjandroid.photos.PhotosInterface;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -48,24 +46,6 @@ public final class FlickrHelper {
         auth.setToken(new OAuthToken(token, secret));
         requestContext.setOAuth(auth);
         return f;
-    }
-
-    public InterestingnessInterface getInterestingInterface() {
-        Flickr f = getFlickr();
-        if (f != null) {
-            return f.getInterestingnessInterface();
-        } else {
-            return null;
-        }
-    }
-
-    public PhotosInterface getPhotosInterface() {
-        Flickr f = getFlickr();
-        if (f != null) {
-            return f.getPhotosInterface();
-        } else {
-            return null;
-        }
     }
 
 }

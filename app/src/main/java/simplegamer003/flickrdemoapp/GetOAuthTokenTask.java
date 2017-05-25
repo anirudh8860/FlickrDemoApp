@@ -30,7 +30,7 @@ public class GetOAuthTokenTask extends AsyncTask<String, Integer, OAuth> {
             return oauthApi.getAccessToken(oauthToken, oauthTokenSecret,
                     verifier);
         } catch (Exception e) {
-            // logger.error(e.getLocalizedMessage(), e);
+            e.printStackTrace();
             return null;
         }
 
